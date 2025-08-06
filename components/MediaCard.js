@@ -35,10 +35,10 @@ export default function MediaCard({ item }) {
         </View>
       )}
       <View style={styles.info}>
+        <Text style={styles.title}>{item.displayTitle}</Text>
         <Text style={styles.overview} numberOfLines={3}>
           {item.overview}
         </Text>
-        <Text style={styles.title}>{item.displayTitle}</Text>
         <View style={styles.starsRow}>{renderStars(item.vote_average)}</View>
       </View>
     </View>
@@ -72,15 +72,16 @@ const styles = StyleSheet.create({
     padding: 10,
     justifyContent: 'space-between',
   },
-  overview: {
-    fontSize: 14,
-    color: '#CCCCCC',
-    marginBottom: 8,
-  },
   title: {
     fontWeight: 'bold',
     fontSize: 16,
     color: '#777179',
+    marginBottom: 4,
+  },
+  overview: {
+    fontSize: 14,
+    color: '#CCCCCC',
+    marginBottom: 8,
   },
   starsRow: {
     flexDirection: 'row',
