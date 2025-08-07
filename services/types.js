@@ -43,3 +43,10 @@ export class Media {
     return this.title || this.name || '';
   }
 }
+
+export class StreamingResponse {
+  constructor(
+    { video }) {
+    this.video = video;
+  }
+}
