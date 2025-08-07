@@ -32,16 +32,19 @@ export default function Home() {
     setLoading(false);
   }
 
-  async function handleSearch(text) {
-    setSearching(true);
-    setError(null);
-    const results = await searchMedia(text);
-    if (results.length === 0) {
-      setError('Nenhum resultado encontrado');
-    }
-    setMedia(results);
-    setSearching(false);
+async function handleSearch(text) {
+  if (!text.trim()) {
+    return loadTrending();
   }
+  setSearching(true);
+  setError(null);
+  const results = await searchMedia(text);
+  if (results.length === 0) {
+    setError('Nenhum resultado encontrado');
+  }
+  setMedia(results);
+  setSearching(false);
+}
 
   const sections = [
     {
