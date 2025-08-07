@@ -1,8 +1,17 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
 export default function MediaCard({ item }) {
+  const navigation = useNavigation();
+
   const renderStars = (vote) => {
     const stars = [];
     const fullStars = Math.floor(vote / 2);
@@ -26,7 +35,11 @@ export default function MediaCard({ item }) {
   };
 
   return (
-    <View style={styles.card}>
+    <TouchableOpacity
+      style={styles.card}
+      activeOpacity={0.8}
+      onPress={() => navigation.navigate('Watch', { item })}
+    >
       {item.poster_url ? (
         <Image source={{ uri: item.poster_url }} style={styles.poster} />
       ) : (
@@ -41,7 +54,7 @@ export default function MediaCard({ item }) {
         </Text>
         <View style={styles.starsRow}>{renderStars(item.vote_average)}</View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
