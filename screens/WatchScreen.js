@@ -9,11 +9,10 @@ import {
   ActivityIndicator,
   Alert,
   Linking,
-  Platform,
   StatusBar,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Video } from 'expo-av';
+import Video from 'react-native-video'; // <-- aqui
 import * as ScreenOrientation from 'expo-screen-orientation';
 import * as NavigationBar from 'expo-navigation-bar';
 import { useRoute } from '@react-navigation/native';
@@ -92,14 +91,18 @@ export default function WatchScreen() {
           source={{ uri: streamingUrl }}
           style={styles.video}
           resizeMode="contain"
-          shouldPlay
-          useNativeControls
-          onPlaybackStatusUpdate={status => {
-            if (status.didJustFinish) {
-              setPlayerOpen(false);
-              setStreamingUrl(null);
-            }
+          controls // habilita os controles nativos do player
+          onEnd={() => {
+            setPlayerOpen(false);
+            setStreamingUrl(null);
           }}
+          onError={() => {
+            Alert.alert('Erro', 'Ocorreu um erro ao reproduzir o vídeo.');
+            setPlayerOpen(false);
+            setStreamingUrl(null);
+          }}
+          fullscreen={true} // tenta abrir em fullscreen (Android/iOS)
+          paused={false} // começa a reproduzir automaticamente
         />
       </View>
     );
