@@ -42,7 +42,7 @@ export default function SeasonsScreen() {
   const renderSeason = ({ item: season }) => (
     <SeasonCard
       season={season}
-      onPress={() => navigation.navigate('Episodes', { season })}
+      onPress={() => navigation.navigate('Episodes', { season, showId: item.id })}
     />
   );
 

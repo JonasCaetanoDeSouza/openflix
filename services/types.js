@@ -82,3 +82,45 @@ export class Season {
     return this.posterUrl || `https://image.tmdb.org/t/p/w500${this.posterPath}`;
   }
 }
+
+export class Episode {
+  constructor({
+    air_date,
+    episode_number,
+    episode_type,
+    id,
+    name,
+    overview,
+    production_code,
+    runtime,
+    season_number,
+    show_id,
+    still_path,
+    vote_average,
+    vote_count,
+    crew,
+    guest_stars,
+    still_url,
+  }) {
+    this.air_date = air_date;
+    this.episode_number = episode_number;
+    this.episode_type = episode_type;
+    this.id = id;
+    this.name = name;
+    this.overview = overview;
+    this.production_code = production_code;
+    this.runtime = runtime;
+    this.season_number = season_number;
+    this.show_id = show_id;
+    this.still_path = still_path;
+    this.vote_average = vote_average;
+    this.vote_count = vote_count;
+    this.crew = crew;
+    this.guest_stars = guest_stars;
+    this.still_url = still_url;
+  }
+
+  get displayTitle() {
+    return `Ep ${this.episode_number} - ${this.name}`;
+  }
+}
