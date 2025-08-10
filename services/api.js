@@ -38,6 +38,21 @@ export async function fetchMovieStreaming(id) {
   }
 }
 
+export async function fetchEpisodeStreaming(showId, seasonNumber, episodeNumber) {
+  try {
+    const response = await fetch(
+      `${BASE_URL}/streaming/tv?id=${encodeURIComponent(showId)}&temporada=${encodeURIComponent(seasonNumber)}&episodio=${encodeURIComponent(episodeNumber)}`
+    );
+        
+    if (!response.ok) throw new Error(`Erro ao buscar link de streaming do episódio ${seasonNumber}x${episodeNumber}`);
+    const data = await response.json();
+    return new StreamingResponse(data);
+  } catch (error) {
+    console.error('API fetchEpisodeStreaming error:', error.message);
+    return null;
+  }
+}
+
 export async function fetchTvSeasons(tvId) {
   try {
     const response = await fetch(`${BASE_URL}/tv/seasons/${encodeURIComponent(tvId)}`);
@@ -52,8 +67,7 @@ export async function fetchTvSeasons(tvId) {
 
 export async function fetchEpisodes(showId, seasonNumber) {
   try {
-    const response = await fetch(`${BASE_URL}/tv/episodes/${showId}/${seasonNumber}`);
-
+    const response = await fetch(`${BASE_URL}/tv/episodes/${encodeURIComponent(showId)}/${encodeURIComponent(seasonNumber)}`);
     if (!response.ok) throw new Error('Erro ao buscar episódios');
     const data = await response.json();
     return data.map(item => new Episode(item));

@@ -12,11 +12,11 @@ import {
   StatusBar,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import Video from 'react-native-video'; // <-- aqui
+import Video from 'react-native-video';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import * as NavigationBar from 'expo-navigation-bar';
 import { useRoute } from '@react-navigation/native';
-import { fetchMovieStreaming } from '../services/api';
+import { fetchMovieStreaming, fetchEpisodeStreaming } from '../services/api';
 
 export default function WatchScreen() {
   const route = useRoute();
@@ -26,6 +26,8 @@ export default function WatchScreen() {
   const [streamingUrl, setStreamingUrl] = useState(null);
   const [loading, setLoading] = useState(false);
   const [playerOpen, setPlayerOpen] = useState(false);
+
+const isEpisode = item.media_type === 'tv';
 
   useEffect(() => {
     if (playerOpen) {
@@ -45,13 +47,18 @@ export default function WatchScreen() {
   }, [playerOpen]);
 
   async function openNativePlayer() {
-    if (item.media_type !== 'movie') {
-      Alert.alert('Não implementado', 'Streaming disponível apenas para filmes.');
-      return;
-    }
     setLoading(true);
     try {
-      const response = await fetchMovieStreaming(item.id);
+      let response;
+      if (isEpisode) {
+        response = await fetchEpisodeStreaming(
+          item.id,
+          item.season_number,
+          item.episode_number
+        );
+      } else {
+        response = await fetchMovieStreaming(item.id);
+      }
       setStreamingUrl(response.video);
       setPlayerOpen(true);
     } catch (error) {
@@ -62,13 +69,18 @@ export default function WatchScreen() {
   }
 
   async function openVLC() {
-    if (item.media_type !== 'movie') {
-      Alert.alert('Não implementado', 'Streaming disponível apenas para filmes.');
-      return;
-    }
     setLoading(true);
     try {
-      const response = await fetchMovieStreaming(item.id);
+      let response;
+      if (isEpisode) {
+        response = await fetchEpisodeStreaming(
+          item.show_id,
+          item.season_number,
+          item.episode_number
+        );
+      } else {
+        response = await fetchMovieStreaming(item.id);
+      }
       const vlcUrl = `vlc://${response.video}`;
       const supported = await Linking.canOpenURL(vlcUrl);
       if (supported) {
@@ -91,7 +103,7 @@ export default function WatchScreen() {
           source={{ uri: streamingUrl }}
           style={styles.video}
           resizeMode="contain"
-          controls // habilita os controles nativos do player
+          controls
           onEnd={() => {
             setPlayerOpen(false);
             setStreamingUrl(null);
@@ -101,16 +113,20 @@ export default function WatchScreen() {
             setPlayerOpen(false);
             setStreamingUrl(null);
           }}
-          fullscreen={true} // tenta abrir em fullscreen (Android/iOS)
-          paused={false} // começa a reproduzir automaticamente
+          fullscreen={true}
+          paused={false}
         />
       </View>
     );
   }
 
+  const backgroundImage = isEpisode ? item.still_url : item.backdrop_url;
+  const title = isEpisode ? item.name : item.title || item.name;
+  const description = item.overview?.trim() || 'Sem descrição disponível.';
+
   return (
     <ImageBackground
-      source={{ uri: item.backdrop_url }}
+      source={{ uri: backgroundImage }}
       style={styles.background}
       resizeMode="cover"
     >
@@ -137,8 +153,8 @@ export default function WatchScreen() {
           </TouchableOpacity>
         </View>
 
-        <Text style={styles.title}>{item.title || item.name}</Text>
-        {item.overview ? <Text style={styles.overview}>{item.overview}</Text> : null}
+        <Text style={styles.title}>{title}</Text>
+        {description ? <Text style={styles.overview}>{description}</Text> : null}
       </View>
     </ImageBackground>
   );

@@ -33,14 +33,30 @@ export default function EpisodesScreen() {
       }
     }
     loadEpisodes();
-  }, [season]);
+    
+    }, [season]);
 
   const renderEpisode = ({ item }) => (
     <EpisodeCard
       episode={item}
-      onPress={() => alert("Player para series não implementado")}
+      onPress={() =>
+        navigation.navigate('Watch', {
+          item: {
+            media_type: 'tv',
+            id: item.show_id,
+            season_number: item.season_number,
+            episode_number: item.episode_number,
+            title: item.name,
+            overview: item.overview,
+            still_url: item.still_url,
+            backdrop_url: item.still_url, // fallback para banner
+          },
+        })
+      }
     />
   );
+
+
 
   if (loading) {
     return (
