@@ -50,3 +50,35 @@ export class StreamingResponse {
     this.video = video;
   }
 }
+
+export class Season {
+  constructor({
+    airDate,
+    episodeCount,
+    id,
+    name,
+    overview,
+    posterPath,
+    seasonNumber,
+    voteAverage,
+    posterUrl,
+  }) {
+    this.airDate = airDate;
+    this.episodeCount = episodeCount;
+    this.id = id;
+    this.name = name;
+    this.overview = overview;
+    this.posterPath = posterPath;
+    this.seasonNumber = seasonNumber;
+    this.voteAverage = voteAverage;
+    this.posterUrl = posterUrl;
+  }
+
+  get displayName() {
+    return this.name || `Temporada ${this.seasonNumber}`;
+  }
+
+  get fullPosterUrl() {
+    return this.posterUrl || `https://image.tmdb.org/t/p/w500${this.posterPath}`;
+  }
+}

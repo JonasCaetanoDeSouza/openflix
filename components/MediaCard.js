@@ -38,7 +38,13 @@ export default function MediaCard({ item }) {
     <TouchableOpacity
       style={styles.card}
       activeOpacity={0.8}
-      onPress={() => navigation.navigate('Watch', { item })}
+      onPress={() => {
+        if (item.media_type === 'tv') {
+          navigation.navigate('Seasons', { item }); // nova tela para temporadas
+        } else {
+          navigation.navigate('Watch', { item }); // player filme
+        }
+      }}
     >
       {item.poster_url ? (
         <Image source={{ uri: item.poster_url }} style={styles.poster} />

@@ -1,4 +1,4 @@
-import { Media, StreamingResponse } from './types';
+import { Season,Media, StreamingResponse } from './types';
 
 const BASE_URL = 'https://vps60602.publiccloud.com.br/api/v1';
 
@@ -35,5 +35,17 @@ export async function fetchMovieStreaming(id) {
   } catch (error) {
     console.error('API fetchMovieStreaming error:', error.message);
     return null;
+  }
+}
+
+export async function fetchTvSeasons(tvId) {
+  try {
+    const response = await fetch(`${BASE_URL}/tv/seasons/${encodeURIComponent(tvId)}`);
+    if (!response.ok) throw new Error('Erro ao buscar temporadas da série');
+    const data = await response.json();
+    return data.map(item => new Season(item));
+  } catch (error) {
+    console.error('API fetchTvSeasons error:', error.message);
+    return [];
   }
 }

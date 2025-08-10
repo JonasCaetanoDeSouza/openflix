@@ -3,6 +3,8 @@ import { Image } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from '../screens/HomeScreen';
 import WatchScreen from '../screens/WatchScreen'; 
+import SeasonsScreen from '../screens/SeasonsScreen';
+
 const Stack = createNativeStackNavigator();
 
 export default function AppNavigator() {
@@ -21,6 +23,8 @@ export default function AppNavigator() {
     >
       <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen name="Watch" component={WatchScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="Seasons" component={SeasonsScreen} />
+
     </Stack.Navigator>
   );
 }
