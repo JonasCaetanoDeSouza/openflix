@@ -74,7 +74,7 @@ const isEpisode = item.media_type === 'tv';
       let response;
       if (isEpisode) {
         response = await fetchEpisodeStreaming(
-          item.show_id,
+          item.id,
           item.season_number,
           item.episode_number
         );
