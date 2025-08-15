@@ -11,13 +11,20 @@ export default function EpisodeCard({ episode, onPress }) {
           <Text style={{ color: '#999' }}>Sem imagem</Text>
         </View>
       )}
-
       <View style={styles.info}>
         <Text style={styles.title}>{episode.name}</Text>
-        
-        {episode.runtime ? (
-          <Text style={styles.runtime}>Duração: {episode.runtime} min</Text>
-        ) : null}
+
+        {/* Linha com duração e texto "Assistido" */}
+        <View style={styles.row}>
+          {episode.runtime ? (
+            <Text style={styles.runtime}>Duração: {episode.runtime} min</Text>
+          ) : (
+            <Text style={styles.runtime}>Duração: --</Text>
+          )}
+          {episode.watched && (
+            <Text style={styles.watchedText}>Assistido</Text>
+          )}
+        </View>
 
         <Text style={styles.overview}>
           {episode.overview || 'Sem descrição disponível.'}
@@ -41,35 +48,12 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     shadowOffset: { width: 0, height: 2 },
   },
-  banner: {
-    width: 160,
-    height: 100,
-    borderRadius: 8,
-    alignSelf: 'center', // centraliza verticalmente a imagem
-  },
-  noImage: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#222',
-  },
-  info: {
-    flex: 1,
-    padding: 10,
-    justifyContent: 'flex-start',
-  },
-  title: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#e60505d0',
-    marginBottom: 4,
-  },
-  runtime: {
-    fontSize: 12,
-    color: '#ccc',
-    marginBottom: 6,
-  },
-  overview: {
-    fontSize: 14,
-    color: '#ccc',
-  },
+  banner: { width: 160, height: 100, borderRadius: 8, alignSelf: 'center' },
+  noImage: { justifyContent: 'center', alignItems: 'center', backgroundColor: '#222' },
+  info: { flex: 1, padding: 10, justifyContent: 'flex-start' },
+  title: { fontSize: 16, fontWeight: 'bold', color: '#e60505d0', marginBottom: 4 },
+  row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 },
+  runtime: { fontSize: 12, color: '#ccc' },
+  watchedText: { fontSize: 12, color: '#e60505d0', fontWeight: 'bold' },
+  overview: { fontSize: 14, color: '#ccc' },
 });

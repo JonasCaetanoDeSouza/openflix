@@ -1,4 +1,3 @@
-// screens/WatchScreen.js
 import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
@@ -20,14 +19,14 @@ import { fetchMovieStreaming, fetchEpisodeStreaming } from '../services/api';
 
 export default function WatchScreen() {
   const route = useRoute();
-  const { item } = route.params;
+  const { item, onWatched } = route.params;
 
   const videoRef = useRef(null);
   const [streamingUrl, setStreamingUrl] = useState(null);
   const [loading, setLoading] = useState(false);
   const [playerOpen, setPlayerOpen] = useState(false);
 
-const isEpisode = item.media_type === 'tv';
+  const isEpisode = item.media_type === 'tv';
 
   useEffect(() => {
     if (playerOpen) {
@@ -52,7 +51,7 @@ const isEpisode = item.media_type === 'tv';
       let response;
       if (isEpisode) {
         response = await fetchEpisodeStreaming(
-          item.id,
+          item.show_id,
           item.season_number,
           item.episode_number
         );
@@ -61,6 +60,10 @@ const isEpisode = item.media_type === 'tv';
       }
       setStreamingUrl(response.video);
       setPlayerOpen(true);
+
+      // Marca como assistido assim que o player abre
+      if (onWatched) onWatched(item.id);
+
     } catch (error) {
       Alert.alert('Erro', 'Não foi possível carregar o vídeo.');
     } finally {
@@ -74,7 +77,7 @@ const isEpisode = item.media_type === 'tv';
       let response;
       if (isEpisode) {
         response = await fetchEpisodeStreaming(
-          item.id,
+          item.show_id,
           item.season_number,
           item.episode_number
         );
@@ -85,6 +88,10 @@ const isEpisode = item.media_type === 'tv';
       const supported = await Linking.canOpenURL(vlcUrl);
       if (supported) {
         Linking.openURL(vlcUrl);
+
+        // Marca como assistido ao abrir no VLC também
+        if (onWatched) onWatched(item.id);
+
       } else {
         Alert.alert('VLC não encontrado', 'Por favor, instale o VLC para usar essa opção.');
       }
@@ -104,10 +111,6 @@ const isEpisode = item.media_type === 'tv';
           style={styles.video}
           resizeMode="contain"
           controls
-          onEnd={() => {
-            setPlayerOpen(false);
-            setStreamingUrl(null);
-          }}
           onError={() => {
             Alert.alert('Erro', 'Ocorreu um erro ao reproduzir o vídeo.');
             setPlayerOpen(false);
@@ -131,28 +134,19 @@ const isEpisode = item.media_type === 'tv';
       resizeMode="cover"
     >
       <View style={styles.overlay} />
-
       <View style={styles.content}>
         <View style={styles.buttonsRow}>
           <TouchableOpacity style={styles.playButton} onPress={openNativePlayer} disabled={loading}>
-            {loading ? (
-              <ActivityIndicator size="large" color="#fff" />
-            ) : (
-              <Ionicons name="play-circle" size={80} color="#fff" />
-            )}
+            {loading ? <ActivityIndicator size="large" color="#fff" /> :
+              <Ionicons name="play-circle" size={80} color="#fff" />}
             <Text style={styles.buttonText}>Player Nativo</Text>
           </TouchableOpacity>
-
           <TouchableOpacity style={styles.playButton} onPress={openVLC} disabled={loading}>
-            {loading ? (
-              <ActivityIndicator size="large" color="#fff" />
-            ) : (
-              <Ionicons name="play-circle" size={80} color="#fff" />
-            )}
+            {loading ? <ActivityIndicator size="large" color="#fff" /> :
+              <Ionicons name="play-circle" size={80} color="#fff" />}
             <Text style={styles.buttonText}>VLC</Text>
           </TouchableOpacity>
         </View>
-
         <Text style={styles.title}>{title}</Text>
         {description ? <Text style={styles.overview}>{description}</Text> : null}
       </View>
@@ -161,50 +155,14 @@ const isEpisode = item.media_type === 'tv';
 }
 
 const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-  },
-  content: {
-    alignItems: 'center',
-    paddingHorizontal: 20,
-  },
-  buttonsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '100%',
-    marginBottom: 20,
-  },
-  playButton: {
-    alignItems: 'center',
-    marginHorizontal: 10,
-  },
-  buttonText: {
-    color: '#fff',
-    marginTop: 6,
-    fontWeight: 'bold',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#fff',
-    textAlign: 'center',
-    marginBottom: 10,
-  },
-  overview: {
-    fontSize: 16,
-    color: '#ccc',
-    textAlign: 'center',
-  },
-  playerContainer: {
-    flex: 1,
-    backgroundColor: '#000',
-  },
-  video: {
-    flex: 1,
-  },
+  background: { flex: 1, justifyContent: 'center' },
+  overlay: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.5)' },
+  content: { alignItems: 'center', paddingHorizontal: 20 },
+  buttonsRow: { flexDirection: 'row', justifyContent: 'space-around', width: '100%', marginBottom: 20 },
+  playButton: { alignItems: 'center', marginHorizontal: 10 },
+  buttonText: { color: '#fff', marginTop: 6, fontWeight: 'bold' },
+  title: { fontSize: 24, fontWeight: 'bold', color: '#fff', textAlign: 'center', marginBottom: 10 },
+  overview: { fontSize: 16, color: '#ccc', textAlign: 'center' },
+  playerContainer: { flex: 1, backgroundColor: '#000' },
+  video: { flex: 1 },
 });

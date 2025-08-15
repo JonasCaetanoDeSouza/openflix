@@ -1,4 +1,3 @@
-// screens/EpisodesScreen.js
 import React, { useEffect, useState } from 'react';
 import {
   View,
@@ -11,6 +10,7 @@ import {
 import { fetchEpisodes } from '../services/api';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import EpisodeCard from '../components/EpisodeCard';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function EpisodesScreen() {
   const route = useRoute();
@@ -23,9 +23,18 @@ export default function EpisodesScreen() {
   useEffect(() => {
     async function loadEpisodes() {
       try {
-        // season.id e season.seasonNumber são necessários para buscar os episódios
         const data = await fetchEpisodes(showId, season.seasonNumber);
-        setEpisodes(data);
+
+        // Carrega episódios assistidos do AsyncStorage
+        const watchedData = await AsyncStorage.getItem(`watched_${showId}`);
+        const watchedList = watchedData ? JSON.parse(watchedData) : [];
+
+        const episodesWithWatched = data.map((ep) => ({
+          ...ep,
+          watched: watchedList.includes(ep.id),
+        }));
+
+        setEpisodes(episodesWithWatched);
       } catch (error) {
         Alert.alert('Erro', 'Não foi possível carregar os episódios.');
       } finally {
@@ -33,8 +42,24 @@ export default function EpisodesScreen() {
       }
     }
     loadEpisodes();
-    
-    }, [season]);
+  }, [season, showId]);
+
+  // Marca episódio como assistido
+  const markAsWatched = async (episodeId) => {
+    setEpisodes((prev) =>
+      prev.map((ep) =>
+        ep.id === episodeId ? { ...ep, watched: true } : ep
+      )
+    );
+
+    const watchedData = await AsyncStorage.getItem(`watched_${showId}`);
+    const watchedList = watchedData ? JSON.parse(watchedData) : [];
+
+    if (!watchedList.includes(episodeId)) {
+      watchedList.push(episodeId);
+      await AsyncStorage.setItem(`watched_${showId}`, JSON.stringify(watchedList));
+    }
+  };
 
   const renderEpisode = ({ item }) => (
     <EpisodeCard
@@ -43,20 +68,21 @@ export default function EpisodesScreen() {
         navigation.navigate('Watch', {
           item: {
             media_type: 'tv',
-            id: item.show_id,
+            show_id: item.show_id,
             season_number: item.season_number,
             episode_number: item.episode_number,
-            title: item.name,
+            id: item.id,
+            name: item.name,
             overview: item.overview,
             still_url: item.still_url,
-            backdrop_url: item.still_url, // fallback para banner
+            backdrop_url: item.still_url,
+            runtime: item.runtime,
           },
+          onWatched: markAsWatched, // <- envia callback para marcar assistido ao abrir
         })
       }
     />
   );
-
-
 
   if (loading) {
     return (
@@ -87,14 +113,6 @@ export default function EpisodesScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#000',
-  },
-  center: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#000',
-  },
+  container: { flex: 1, backgroundColor: '#000' },
+  center: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#000' },
 });
