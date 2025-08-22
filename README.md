@@ -6,6 +6,12 @@ Aplicativo gratuito para assistir filmes e séries.
 
 O **OpenFlix** é uma plataforma open-source que permite ao usuário navegar, buscar e assistir filmes e séries em seu dispositivo móvel. Inspirado na experiência do Netflix, o projeto é ideal para quem busca alternativas livres e personalizáveis para entretenimento.
 
+
+## Download
+
+Você pode baixar o APK pronto para Android [clicando aqui](https://github.com/JonasCaetanoDeSouza/openflix/releases/download/1.0/openflix1.0.apk).
+
+
 ## Funcionalidades
 
 - Catálogo de filmes e séries
@@ -27,10 +33,6 @@ O **OpenFlix** é uma plataforma open-source que permite ao usuário navegar, bu
    ```bash
    npm start
    ```
-
-## Download
-
-Você pode baixar o APK pronto para Android [clicando aqui](https://github.com/JonasCaetanoDeSouza/openflix/releases/download/1.0/openflix1.0.apk).
 
 ## Como compilar para Android usando Gradle
 
