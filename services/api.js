@@ -1,6 +1,6 @@
 import { Episode, Season, Media, StreamingResponse } from './types';
 
-const BASE_URL = 'https://vps60602.publiccloud.com.br/api/v1';
+const BASE_URL = 'https://vps61553.publiccloud.com.br/api/v1';
 
 export async function fetchTrending() {
   try {
